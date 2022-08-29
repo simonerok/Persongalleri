@@ -51,6 +51,8 @@
           "x-apikey": "600fe9211346a1524ff12e31",
         },
       };
+      let filter = "ja";
+
       async function hentData() {
         const respons = await fetch(endpoint, mereinfo);
         const json = await respons.json();
@@ -62,16 +64,18 @@
         const main = document.querySelector("#indhold");
         const template = document.querySelector("template").content;
         personer.forEach((person) => {
-          const klon = template.cloneNode(true);
-          klon.querySelector(".billede").src = "/billeder/" + person.billede;
-          klon.querySelector("h2").textContent = person.fornavn + " " + person.efternavn;
-          klon.querySelector(".Email").textContent = person.email;
-          klon.querySelector(".Fødselsdag").textContent = person.fødselsdag.slice(0, 10);
-          klon.querySelector(".Hobby").textContent = person.hobby;
-          klon.querySelector(".Titel").textContent = person.titel;
-          klon.querySelector(".Troende").textContent = person.troende;
-          klon.querySelector("article").style.borderRadius = "1rem";
-          main.appendChild(klon);
+          if (filter == person.troende) {
+            const klon = template.cloneNode(true);
+            klon.querySelector(".billede").src = "/billeder/" + person.billede;
+            klon.querySelector("h2").textContent = person.fornavn + " " + person.efternavn;
+            klon.querySelector(".Email").textContent = person.email;
+            klon.querySelector(".Fødselsdag").textContent = person.fødselsdag.slice(0, 10);
+            klon.querySelector(".Hobby").textContent = person.hobby;
+            klon.querySelector(".Titel").textContent = person.titel;
+            klon.querySelector(".Troende").textContent = person.troende;
+            klon.querySelector("article").style.borderRadius = "1rem";
+            main.appendChild(klon);
+          }
         });
       }
 
