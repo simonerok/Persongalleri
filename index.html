@@ -5,10 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main></main>
+
+    <h1 id="header">Alle</h1>
+    <div id="knapper">
+      <button data-troende="alle" class="valgt">Alle</button>
+      <button data-troende="ja">Troende</button>
+      <button data-troende="tvivler">Tvivler</button>
+      <button data-troende="nej">Nej</button>
+    </div>
+
     <section id="indhold">
       <template>
         <article>
@@ -42,6 +50,9 @@
         border: 2px solid orange;
         padding: 1rem;
       }
+      .valgt {
+        background-color: red;
+      }
     </style>
 
     <script>
@@ -51,20 +62,23 @@
           "x-apikey": "600fe9211346a1524ff12e31",
         },
       };
-      let filter = "ja";
+      let filter = "alle";
+      let personer;
+      const template = document.querySelector("template").content;
+      const main = document.querySelector("#indhold");
 
       async function hentData() {
         const respons = await fetch(endpoint, mereinfo);
-        const json = await respons.json();
-        vis(json);
+        personer = await respons.json();
+        vis(personer);
       }
 
       function vis(personer) {
-        console.log(personer);
-        const main = document.querySelector("#indhold");
-        const template = document.querySelector("template").content;
+        console.log("vis personer");
+        /* fjerner "listen" hver gang der bliver klikket, dette gøres for at der ikke bliver ved med at køres listen igennem */
+        main.innerHTML = "";
         personer.forEach((person) => {
-          if (filter == person.troende) {
+          if (filter == person.troende || filter == "alle") {
             const klon = template.cloneNode(true);
             klon.querySelector(".billede").src = "/billeder/" + person.billede;
             klon.querySelector("h2").textContent = person.fornavn + " " + person.efternavn;
@@ -79,6 +93,21 @@
         });
       }
 
+      document.querySelector("button").addEventListener("click", vaelger);
+      document.querySelector("button:nth-child(2)").addEventListener("click", vaelger);
+      document.querySelector("button:nth-child(3)").addEventListener("click", vaelger);
+      document.querySelector("button:nth-child(4)").addEventListener("click", vaelger);
+
+      function vaelger() {
+        console.log("klikket på");
+        filter = this.dataset.troende;
+        vis(personer);
+        header.textContent = this.dataset.troende;
+        document.querySelector(".valgt").classList.remove("valgt");
+        this.classList.add("valgt");
+      }
+
+      /* kommer fra den asynkrone funtion ved samme navn */
       hentData();
     </script>
   </body>
