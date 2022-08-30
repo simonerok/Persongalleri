@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      img {
+        width: 100%;
+      }
+
+      /* mobilversion vi bruger minmax for at den vælger hvor meget plads den skal udfylde */
+      #indhold {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+        padding: 1rem;
+      }
+
+      article {
+        border: 2px solid orange;
+        padding: 1rem;
+      }
+      .valgt {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <main></main>
+
+    <h1 id="header">Alle</h1>
+    <div id="knapper">
+      <button data-troende="alle" class="valgt">Alle</button>
+      <button data-troende="ja">Troende</button>
+      <button data-troende="tvivler">Tvivler</button>
+      <button data-troende="nej">Ikke troende</button>
+    </div>
+
+    <section id="indhold">
+      <template>
+        <article>
+          <h2></h2>
+          <img class="billede" src="" alt="" />
+          <p class="Fornavn"></p>
+          <p class="Email"></p>
+          <p class="Efternavn"></p>
+          <p class="Fødselsdag"></p>
+          <p class="Hobby"></p>
+          <p class="Titel"></p>
+          <p class="Troende"></p>
+        </article>
+      </template>
+    </section>
+
+    <script>
+      /*  const header = document.querySelector("header", "h2") */
+      const endpoint = "https://persongalleri-5d3e.restdb.io/rest/persongalleri ";
+      const mereinfo = {
+        headers: {
+          "x-apikey": "600fe9211346a1524ff12e31",
+        },
+      };
+      let filter = "alle";
+      let personer;
+      const template = document.querySelector("template").content;
+      const main = document.querySelector("#indhold");
+
+      async function hentData() {
+        const respons = await fetch(endpoint, mereinfo);
+        personer = await respons.json();
+        console.log(personer);
+        vis(personer);
+      }
+
+      function vis(personer) {
+        console.log("vis personer");
+        /* fjerner "listen" hver gang der bliver klikket, dette gøres for at der ikke bliver ved med at køres listen igennem */
+        main.innerHTML = "";
+        personer.forEach((person) => {
+          if (filter == person.troende || filter == "alle") {
+            const klon = template.cloneNode(true);
+            klon.querySelector(".billede").src = "/billeder/" + person.billede;
+            klon.querySelector("h2").textContent = person.fornavn + " " + person.efternavn;
+            klon.querySelector(".Email").textContent = person.email;
+            klon.querySelector(".Fødselsdag").textContent = person.fødselsdag.slice(0, 10);
+            klon.querySelector(".Hobby").textContent = person.hobby;
+            klon.querySelector(".Titel").textContent = person.titel;
+            klon.querySelector(".Troende").textContent = person.troende;
+            klon.querySelector("article").style.borderRadius = "1rem";
+            /*  clck event for enekelt person. Vi er interesseret i at få hver enkelt boks id (som er restdb´s id) */
+            klon.querySelector("article").addEventListener("click", () => {
+              visEnkeltPerson(person._id);
+            });
+            main.appendChild(klon);
+          }
+        });
+      }
+
+      /* funktion til visEnkeltperson */
+      function visEnkeltPerson(id) {
+        console.log(id);
+        location.href = "singleview.html?id=" + id;
+      }
+      visEnkeltPerson();
+
+      document.querySelector("button").addEventListener("click", vaelger);
+      document.querySelector("button:nth-child(2)").addEventListener("click", vaelger);
+      document.querySelector("button:nth-child(3)").addEventListener("click", vaelger);
+      document.querySelector("button:nth-child(4)").addEventListener("click", vaelger);
+
+      function vaelger() {
+        filter = this.dataset.troende;
+        vis(personer);
+        header.textContent = this.dataset.troende;
+        document.querySelector(".valgt").classList.remove("valgt");
+        this.classList.add("valgt");
+      }
+
+      /* kommer fra den asynkrone funtion ved samme navn. kan udelades men er god for at vise vores data, sikre vi har vores dom elementer (men vi har kun tom template) */
+      hentData();
+    </script>
+  </body>
+</html>
