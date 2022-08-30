@@ -71,6 +71,7 @@
       async function hentData() {
         const respons = await fetch(endpoint, mereinfo);
         personer = await respons.json();
+        console.log(personer);
         vis(personer);
       }
 
@@ -108,7 +109,7 @@
         this.classList.add("valgt");
       }
 
-      /* kommer fra den asynkrone funtion ved samme navn */
+      /* kommer fra den asynkrone funtion ved samme navn. kan udelades men er god for at vise vores data, sikre vi har vores dom elementer (men vi har kun tom template) */
       hentData();
     </script>
   </body>
