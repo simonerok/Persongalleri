@@ -91,7 +91,7 @@
             klon.querySelector("article").style.borderRadius = "1rem";
             /*  clck event for enekelt person. Vi er interesseret i at få hver enkelt boks id (som er restdb´s id) */
             klon.querySelector("article").addEventListener("click", () => {
-              visEnkeltPerson(person._id);
+              visEnkeltPerson(person);
             });
             main.appendChild(klon);
           }
@@ -99,9 +99,10 @@
       }
 
       /* funktion til visEnkeltperson */
-      function visEnkeltPerson(id) {
-        console.log(id);
-        location.href = "singleview.html?id=" + id;
+      function visEnkeltPerson(hvem) {
+        console.log(hvem);
+        /* url parameter sættes = vores post inde i databasen (hvem står for person og er en parameter i visEnkeltPerson)  */
+        location.href = `detail.html?id=${hvem._id}`;
       }
       visEnkeltPerson();
 
